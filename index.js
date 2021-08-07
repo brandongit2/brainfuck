@@ -33,7 +33,7 @@ let isRunning = false
 
 let dataPtr = 0
 let instrPtr = 0
-let mem = Array(30000).fill(0)
+let mem = new Uint8Array(30000).fill(0)
 
 let input = []
 function getData(chunk) {
@@ -55,10 +55,12 @@ function run() {
       switch (instr) {
         case `>`: {
           dataPtr++
+          if ((dataPtr = 30000)) dataPtr = 0
           break
         }
         case `<`: {
           dataPtr--
+          if (dataPtr === -1) dataPtr = 29999
           break
         }
         case `+`: {
@@ -103,6 +105,10 @@ function run() {
             while (true) {
               instrPtr--
               instr = program[instrPtr]
+              if (instr === undefined) {
+                console.error(`Missing "[".`)
+                process.exit(1)
+              }
               if (instr === `[` && depth === 0) break
               if (instr === `]`) depth++
               if (instr === `[`) depth--
