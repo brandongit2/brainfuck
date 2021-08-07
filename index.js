@@ -9,8 +9,18 @@ const programs = [
 
   // Infinitely print stdin
   `+[,.]`,
+
+  // `+++++++++++++++++++++++++++++++++.>++++++++++.>++++++++++.`,
+
+  // // Take two numbers from stdin, add them together, print result
+  // `
+  //   2x8 bytes for the two input numbers
+  //   ++++++++++++++++
+
+  //   +[,]
+  // `,
 ]
-const program = programs[0]
+const program = programs[+process.argv[process.argv.length - 1]]
 
 let isRunning = false
 
@@ -21,7 +31,7 @@ let mem = Array(30000).fill(0)
 let input = []
 function getData(chunk) {
   if (chunk === `\u0003`) process.exit()
-  input.push(chunk)
+  input.push(chunk.charCodeAt(0))
   if (!isRunning) run()
 }
 stdin.on(`data`, getData)
@@ -33,7 +43,7 @@ function run() {
     isRunning = true
     while (true) {
       let instr = program[instrPtr]
-      if (instr === undefined) exit()
+      if (instr === undefined) process.exit()
 
       switch (instr) {
         case `>`: {
@@ -53,7 +63,7 @@ function run() {
           break
         }
         case `.`: {
-          output.push(mem[dataPtr])
+          process.stdout.write(String.fromCharCode(mem[dataPtr]))
           break
         }
         case `,`: {
@@ -71,7 +81,7 @@ function run() {
               instr = program[instrPtr]
               if (instr === undefined) {
                 console.error(`Missing "]".`)
-                exit()
+                process.exit(1)
               }
               if (instr === `]` && depth === 0) break
               if (instr === `[`) depth++
@@ -103,11 +113,3 @@ function run() {
 }
 
 run()
-
-function exit() {
-  if (output[0] !== undefined) {
-    let str = output.reduce((acc, cur) => acc + String.fromCharCode(cur), ``)
-    console.info(str)
-  }
-  process.exit()
-}
