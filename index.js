@@ -37,7 +37,7 @@ let mem = new Uint8Array(30000).fill(0)
 
 let input = []
 function getData(chunk) {
-  if (chunk === `\u0003`) process.exit()
+  if (chunk === `\u0003`) exit()
   input.push(chunk.charCodeAt(0))
   if (!isRunning) run()
 }
@@ -50,12 +50,12 @@ function run() {
     isRunning = true
     while (true) {
       let instr = program[instrPtr]
-      if (instr === undefined) process.exit()
+      if (instr === undefined) exit()
 
       switch (instr) {
         case `>`: {
           dataPtr++
-          if ((dataPtr = 30000)) dataPtr = 0
+          if (dataPtr === 30000) dataPtr = 0
           break
         }
         case `<`: {
@@ -107,7 +107,7 @@ function run() {
               instr = program[instrPtr]
               if (instr === undefined) {
                 console.error(`Missing "[".`)
-                process.exit(1)
+                exit(1)
               }
               if (instr === `[` && depth === 0) break
               if (instr === `]`) depth++
@@ -126,3 +126,12 @@ function run() {
 }
 
 run()
+
+function exit(code) {
+  const memStr = Array.from(mem)
+    .reduce((acc, cur) => `${acc} ${cur}`)
+    .replace(/( 0)+$/, ``)
+  console.info(`\nExiting. Memory: ${memStr}`)
+
+  process.exit(code)
+}
