@@ -20,7 +20,14 @@ const programs = [
   //   +[,]
   // `,
 ]
-const program = programs[+process.argv[process.argv.length - 1]]
+
+const arg = process.argv[process.argv.length - 1]
+let program
+if (/^[0-9]+$/.test(arg)) {
+  program = programs[+arg]
+} else {
+  program = arg
+}
 
 let isRunning = false
 
