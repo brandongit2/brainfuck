@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function factorize(x) {
+        if (x === 0 || x === 1) return [x]
+
+        const sign = Math.sign(x)
+        x *= sign
+        let fac = Math.floor(Math.sqrt(x))
+        while (!Number.isInteger(x / fac)) fac--
+
+        let fac1 = fac
+        let fac2 = x / fac
+        if (fac1 === 1) {
+          // fac2 is prime
+          let diff = 1
+          while (factorize((fac2 + diff) * sign).includes(`prime`)) {
+            if (diff < 0) {
+              diff = -diff + 1
+              if (diff === 0) diff++
+            } else if (diff > 0) {
+              diff = -diff - 1
+              if (diff === 0) diff--
+            }
+          }
+          return [factorize((fac2 + diff) * sign), factorize(-diff)]
+        } else if (fac2 === 1) {
+          // fac1 is prime
+          let diff = 1
+          while (factorize((fac1 + diff) * sign).includes(`prime`)) {
+            if (diff < 0) {
+              diff = -diff + 1
+              if (diff === 0) diff++
+            } else if (diff > 0) {
+              diff = -diff - 1
+              if (diff === 0) diff--
+            }
+          }
+          return [factorize((fac1 + diff) * sign), factorize(-diff)]
+        } else {
+          return [[factorize(fac1 * sign), factorize(fac2 * sign)]]
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <button type="button" onclick="factorize(1111111)">Factorize!</button>
+  </body>
+</html>
