@@ -1,6 +1,5 @@
-const stdin = process.stdin
-stdin.setRawMode(true)
-stdin.setEncoding(`ascii`)
+process.stdin.setRawMode(true)
+process.stdin.setEncoding(`ascii`)
 console.info(`pid ${process.pid}`)
 
 const programs = [
@@ -10,17 +9,11 @@ const programs = [
   // Infinitely print stdin
   `+[,.]`,
 
-  // `+++++++++++++++++++++++++++++++++.>++++++++++.>++++++++++.`,
-
-  // // Take two numbers from stdin, add them together, print result
-  // `
-  //   2x8 bytes for the two input numbers
-  //   ++++++++++++++++
-
-  //   +[,]
-  // `,
+  // Add two digits
+  `>,>,>>++++++[<++++++++>-]<[<<->->-]<[<<+>>]<[<+>-]`,
 ]
 
+// Get command line arguments
 const arg = process.argv[process.argv.length - 1]
 let program
 if (/^[0-9]+$/.test(arg)) {
@@ -30,20 +23,18 @@ if (/^[0-9]+$/.test(arg)) {
 }
 
 let isRunning = false
-
 let dataPtr = 0
 let instrPtr = 0
 let mem = new Uint8Array(30000).fill(0)
 
+// Pull from stdin
 let input = []
 function getData(chunk) {
   if (chunk === `\u0003`) exit()
   input.push(chunk.charCodeAt(0))
   if (!isRunning) run()
 }
-stdin.on(`data`, getData)
-
-let output = []
+process.stdin.on(`data`, getData)
 
 function run() {
   try {
@@ -90,7 +81,7 @@ function run() {
               instr = program[instrPtr]
               if (instr === undefined) {
                 console.error(`Missing "]".`)
-                process.exit(1)
+                exit(1)
               }
               if (instr === `]` && depth === 0) break
               if (instr === `[`) depth++
